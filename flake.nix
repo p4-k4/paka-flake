@@ -19,7 +19,8 @@
         modules = [
           {
             networking.hostName = hostName;
-            users.users.${userName} = { name = userName;
+            users.users.${userName} = {
+              name = userName;
               home = homePath;
               shell = nixpkgs.legacyPackages.${system}.zsh;
             };
@@ -75,11 +76,17 @@
               taps = [
                 "nikitabobko/tap"
               ];
+              brews = [ "cocoapods" ];
               casks = [
                 "kitty"
                 "aerospace"
                 "flutter"
+                "google-chrome"
+                "android-studio"
               ];
+              masApps = {
+                Xcode = 497799835;
+              };
             };
 
             system.activationScripts.postActivation.text = ''
