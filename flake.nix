@@ -87,7 +87,7 @@
               chmod +x ${./scripts/setup-system-config.sh}
 
               # Run the setup script with absolute paths
-              ${./scripts/setup-system-config.sh} "${userName}" "${homePath}" "${./scripts}" "${./config}"
+              ${./scripts/setup-system-config.sh} "${userName}" "${homePath}" "${./scripts}" "${./config}" "${./assets/wallpaper.heic}"
             '';
 
             system.stateVersion = 4;

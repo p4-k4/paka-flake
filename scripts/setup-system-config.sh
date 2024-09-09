@@ -1,13 +1,14 @@
 #!/bin/bash
 # Check if required arguments are provided
-if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <username> <home_path> <scripts_dir> <config_dir>"
+if [ "$#" -ne 5 ]; then
+    echo "Usage: $0 <username> <home_path> <scripts_dir> <config_dir> <wallpaper_path>"
     exit 1
 fi
 USERNAME="$1"
 HOME_PATH="$2"
 SCRIPTS_DIR="$3"
 CONFIG_DIR="$4"
+WALLPAPER_PATH="$5"
 
 # Function to set up Zsh configuration
 setup_zsh() {
@@ -96,6 +97,23 @@ setup_flutter() {
     echo "Flutter setup completed successfully."
 }
 
+setup_wallpaper() {
+    echo "Setting up wallpaper..."
+    
+    if [ -f "$WALLPAPER_PATH" ]; then
+        # Copy the wallpaper to the user's Pictures folder
+        cp "$WALLPAPER_PATH" "$HOME_PATH/Pictures/wallpaper.heic"
+        chown "$USERNAME:staff" "$HOME_PATH/Pictures/wallpaper.heic"
+        
+        # Set the wallpaper using osascript
+        su - $USERNAME -c "osascript -e 'tell application \"System Events\" to tell every desktop to set picture to \"$HOME_PATH/Pictures/wallpaper.heic\"'"
+        
+        echo "Wallpaper set successfully."
+    else
+        echo "Error: Wallpaper file not found at $WALLPAPER_PATH"
+    fi
+}
+
 # Function to set up other configurations (placeholder for future additions)
 setup_other_configs() {
     echo "Setting up other configurations..."
@@ -107,6 +125,7 @@ echo "Starting system configuration setup..."
 setup_zsh
 setup_aerospace
 setup_flutter
+setup_wallpaper
 setup_other_configs
 echo "System configuration setup completed."
 echo "IMPORTANT: To apply all changes, please either restart your terminal or run 'source $HOME_PATH/.config/zsh/.zshrc' in your current session."
