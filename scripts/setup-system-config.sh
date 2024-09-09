@@ -54,64 +54,46 @@ setup_aerospace() {
 setup_flutter() {
     echo "Setting up Flutter..."
     
-    # Source the .zshrc to get the updated PATH with Homebrew
-    source "$HOME_PATH/.config/zsh/.zshrc"
+    # Check for Flutter in Homebrew bin directory
+    FLUTTER_PATH="/opt/homebrew/bin/flutter"
     
-    # Try to find Flutter installation
-    echo "Checking Flutter installation via Homebrew..."
-    FLUTTER_PATH=$(/opt/homebrew/bin/brew --prefix flutter 2>/dev/null)
-    
-    if [ -z "$FLUTTER_PATH" ]; then
-        echo "Flutter not found via Homebrew. Checking common installation paths..."
-        COMMON_PATHS=(
-            "/opt/homebrew/Caskroom/flutter/latest/flutter"
-            "/usr/local/Caskroom/flutter/latest/flutter"
-            "$HOME/flutter"
-            "/Applications/flutter"
-        )
-        
-        for path in "${COMMON_PATHS[@]}"; do
-            echo "Checking $path"
-            if [ -d "$path" ]; then
-                echo "Found directory at $path"
-                if [ -d "$path/bin" ]; then
-                    FLUTTER_PATH="$path"
-                    echo "Flutter bin directory found at $FLUTTER_PATH/bin"
-                    break
-                else
-                    echo "bin directory not found in $path"
-                fi
-            else
-                echo "$path does not exist"
-            fi
-        done
+    if [ -f "$FLUTTER_PATH" ]; then
+        echo "Flutter found at: $FLUTTER_PATH"
     else
-        echo "Homebrew reports Flutter at: $FLUTTER_PATH"
-    fi
-    
-    if [ -z "$FLUTTER_PATH" ]; then
-        echo "Flutter not found. Please ensure it's installed via Homebrew or manually."
-        echo "Homebrew Caskroom contents:"
-        ls -l /opt/homebrew/Caskroom/
+        echo "Error: Flutter not found at $FLUTTER_PATH. Please ensure it's installed via Homebrew."
         return 1
     fi
     
-    echo "Flutter found at: $FLUTTER_PATH"
-    
     # Add Flutter to PATH in .zshrc if not already present
     if ! grep -q "export PATH=.*flutter/bin" "$HOME_PATH/.config/zsh/.zshrc"; then
-        echo "export PATH=\"\$PATH:$FLUTTER_PATH/bin\"" >> "$HOME_PATH/.config/zsh/.zshrc"
+        echo "export PATH=\"\$PATH:$(dirname "$FLUTTER_PATH")\"" >> "$HOME_PATH/.config/zsh/.zshrc"
         echo "Added Flutter to PATH in .zshrc"
     else
         echo "Flutter already in PATH"
     fi
     
-    # Switch to Flutter master channel and upgrade
+    # Switch to Flutter master channel and upgrade as the non-root user
     echo "Switching to Flutter master channel and upgrading..."
-    $FLUTTER_PATH/bin/flutter channel master
-    $FLUTTER_PATH/bin/flutter upgrade
     
-    echo "Flutter setup completed. Please restart your terminal or run 'source ~/.zshrc' to apply changes."
+    # Function to run Flutter commands and capture output
+    run_flutter_command() {
+        local command="$1"
+        local output
+        output=$(su - $USERNAME -c "$FLUTTER_PATH $command" 2>&1)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to $command"
+            echo "Error details:"
+            echo "$output"
+            return 1
+        fi
+        echo "Successfully $command"
+    }
+    
+    # Run Flutter commands
+    run_flutter_command "channel master" || return 1
+    run_flutter_command "upgrade" || return 1
+    
+    echo "Flutter setup completed successfully."
 }
 
 # Function to set up other configurations (placeholder for future additions)
@@ -127,3 +109,4 @@ setup_aerospace
 setup_flutter
 setup_other_configs
 echo "System configuration setup completed."
+echo "IMPORTANT: To apply all changes, please either restart your terminal or run 'source $HOME_PATH/.config/zsh/.zshrc' in your current session."
