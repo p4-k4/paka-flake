@@ -53,6 +53,23 @@ setup_aerospace() {
 		fi
 	}
 
+
+# Function to set up Neovim configuration
+setup_neovim() {
+    echo "Setting up Neovim configuration..."
+
+    # Create ~/.config/nvim directory if it doesn't exist
+    mkdir -p "$HOME_PATH/.config/nvim"
+
+    # Copy the nvim configuration files
+    cp -R "${CONFIG_DIR}/nvim/"* "$HOME_PATH/.config/nvim/"
+    
+    # Set ownership
+    chown -R "$USERNAME:staff" "$HOME_PATH/.config/nvim"
+
+    echo "Neovim configuration setup completed."
+}
+
 # Function to set up Flutter and its dependencies
 setup_flutter() {
     echo "Setting up Flutter and its dependencies..."
@@ -139,21 +156,6 @@ setup_wallpaper() {
 		fi
 	}
 
-# Function to set up Neovim configuration
-setup_neovim() {
-    echo "Setting up Neovim configuration..."
-
-    # Create ~/.config/nvim directory if it doesn't exist
-    mkdir -p "$HOME_PATH/.config/nvim"
-
-    # Copy the nvim configuration files
-    cp -R "${CONFIG_DIR}/nvim/"* "$HOME_PATH/.config/nvim/"
-    
-    # Set ownership
-    chown -R "$USERNAME:staff" "$HOME_PATH/.config/nvim"
-
-    echo "Neovim configuration setup completed."
-}
 
 # Function to set up other configurations (placeholder for future additions)
 setup_other_configs() {
