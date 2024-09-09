@@ -44,6 +44,7 @@
               autojump
               gh
               htop
+              neofetch
               # Editors
               vim
               neovim

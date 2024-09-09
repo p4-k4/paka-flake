@@ -110,3 +110,5 @@ source $ZSH/oh-my-zsh.sh
 bindkey -v
 
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting autojump flutter)
+
+neofetch
