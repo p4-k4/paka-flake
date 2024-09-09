@@ -77,25 +77,47 @@ setup_flutter() {
     
     # Install Rosetta 2 for ARM Macs
     echo "Installing Rosetta 2..."
-    sudo softwareupdate --install-rosetta --agree-to-license
+    if ! sudo softwareupdate --install-rosetta --agree-to-license > /dev/null 2>&1; then
+        echo "Error: Failed to install Rosetta 2"
+        return 1
+    fi
+    echo "Rosetta 2 installed successfully"
     
     # Accept Xcode license
-    sudo xcodebuild -license accept
+    # echo "Accepting Xcode license..."
+    # if ! sudo xcodebuild -license accept > /dev/null 2>&1; then
+    #     echo "Error: Failed to accept Xcode license"
+    #     return 1
+    # fi
+    # echo "Xcode license accepted"
     
     # Set up Android SDK (this step requires manual intervention)
-    echo "Please open Android Studio and follow the setup wizard to install the Android SDK."
-    echo "After installation, run: flutter config --android-sdk <path_to_android_sdk>"
+    # echo "Please open Android Studio and follow the setup wizard to install the Android SDK."
+    # echo "After installation, run: flutter config --android-sdk <path_to_android_sdk>"
     
     # Switch to Flutter master channel and upgrade
     echo "Switching to Flutter master channel and upgrading..."
-    $FLUTTER_PATH channel master
-    $FLUTTER_PATH upgrade
+    if ! $FLUTTER_PATH channel master > /dev/null 2>&1; then
+        echo "Error: Failed to switch to Flutter master channel"
+        return 1
+    fi
+    if ! $FLUTTER_PATH upgrade > /dev/null 2>&1; then
+        echo "Error: Failed to upgrade Flutter"
+        return 1
+    fi
+    echo "Flutter switched to master channel and upgraded successfully"
     
     # Run Flutter doctor
     echo "Running Flutter doctor..."
-    $FLUTTER_PATH doctor -v
+    FLUTTER_DOCTOR_OUTPUT=$($FLUTTER_PATH doctor -v 2>&1)
+    if echo "$FLUTTER_DOCTOR_OUTPUT" | grep -q "\[✓\] No issues found!"; then
+        echo "Flutter doctor: No issues found"
+    else
+        echo "Flutter doctor found issues. Please review the following output:"
+        echo "$FLUTTER_DOCTOR_OUTPUT"
+    fi
     
-    echo "Flutter setup completed. Please check the output of 'flutter doctor' for any remaining issues."
+    echo "Flutter setup completed."
 }
 
 # Function to set wallpaper
@@ -117,10 +139,26 @@ setup_wallpaper() {
 		fi
 	}
 
+# Function to set up Neovim configuration
+setup_neovim() {
+    echo "Setting up Neovim configuration..."
+
+    # Create ~/.config/nvim directory if it doesn't exist
+    mkdir -p "$HOME_PATH/.config/nvim"
+
+    # Copy the nvim configuration files
+    cp -R "${CONFIG_DIR}/nvim/"* "$HOME_PATH/.config/nvim/"
+    
+    # Set ownership
+    chown -R "$USERNAME:staff" "$HOME_PATH/.config/nvim"
+
+    echo "Neovim configuration setup completed."
+}
+
 # Function to set up other configurations (placeholder for future additions)
 setup_other_configs() {
-	echo "Setting up other configurations..."
-# Add other configuration setup steps here
+    echo "Setting up other configurations..."
+    # Add other configuration setup steps here
 }
 
 # Main execution
@@ -129,6 +167,7 @@ setup_zsh
 setup_aerospace
 setup_flutter
 setup_wallpaper
+setup_neovim  # Add this line to run the new function
 setup_other_configs
 echo "System configuration setup completed."
 echo "IMPORTANT: To apply all changes, please either restart your terminal or run 'source $HOME_PATH/.config/zsh/.zshrc' in your current session."

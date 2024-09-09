@@ -82,11 +82,11 @@
                 "aerospace"
                 "flutter"
                 "google-chrome"
-                "android-studio"
+                # "android-studio"
               ];
-              masApps = {
-                Xcode = 497799835;
-              };
+              # masApps = {
+              #   Xcode = 497799835;
+              # };
             };
 
             system.activationScripts.postActivation.text = ''
