@@ -62,7 +62,7 @@ setup_neovim() {
     mkdir -p "$HOME_PATH/.config/nvim"
 
     # Copy the nvim configuration files
-    cp -R "${CONFIG_DIR}/nvim/"* "$HOME_PATH/.config/nvim/"
+    cp -R "${CONFIG_DIR}/nvim/" "$HOME_PATH/.config/nvim/"
     
     # Set ownership
     chown -R "$USERNAME:staff" "$HOME_PATH/.config/nvim"
