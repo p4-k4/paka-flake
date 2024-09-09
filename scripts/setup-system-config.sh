@@ -33,6 +33,23 @@ setup_zsh() {
     echo "Zsh configuration setup completed."
 }
 
+# Function to set up Aerospace configuration
+setup_aerospace() {
+    echo "Setting up Aerospace configuration..."
+    
+    # Create ~/.config/aerospace directory if it doesn't exist
+    mkdir -p "$HOME_PATH/.config/aerospace"
+    # Copy the aerospace.toml file from the config directory to ~/.config/aerospace
+    echo "Copying aerospace.toml from: ${CONFIG_DIR}"
+    cp "${CONFIG_DIR}/aerospace/aerospace.toml" "$HOME_PATH/.config/aerospace/aerospace.toml"
+    if [ $? -eq 0 ]; then
+        chown "$USERNAME:staff" "$HOME_PATH/.config/aerospace/aerospace.toml"
+        echo "Aerospace configuration setup completed."
+    else
+        echo "Error: Failed to copy aerospace.toml. Please check if the file exists in ${CONFIG_DIR}/aerospace/"
+    fi
+}
+
 # Function to set up Flutter
 setup_flutter() {
     echo "Setting up Flutter..."
