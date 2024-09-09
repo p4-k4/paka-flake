@@ -1,11 +1,9 @@
 #!/bin/bash
-
 # Check if required arguments are provided
 if [ "$#" -ne 4 ]; then
     echo "Usage: $0 <username> <home_path> <scripts_dir> <config_dir>"
     exit 1
 fi
-
 USERNAME="$1"
 HOME_PATH="$2"
 SCRIPTS_DIR="$3"
@@ -47,19 +45,39 @@ setup_aerospace() {
     fi
 }
 
+# Function to set up Flutter
+setup_flutter() {
+    echo "Setting up Flutter..."
+    
+    # Define Flutter path
+    FLUTTER_PATH="/opt/homebrew/Caskroom/flutter/latest/flutter"
+    
+    # Check if Flutter is installed
+    if [ ! -d "$FLUTTER_PATH" ]; then
+        echo "Flutter not found. Please ensure it's installed via Homebrew."
+        return 1
+    fi
+    
+    # Add Flutter to PATH in .zshrc
+    echo "export PATH=\"\$PATH:$FLUTTER_PATH/bin\"" >> "$HOME_PATH/.config/zsh/.zshrc"
+    
+    # Switch to Flutter master channel
+    $FLUTTER_PATH/bin/flutter channel master
+    $FLUTTER_PATH/bin/flutter upgrade
+    
+    echo "Flutter setup completed. Please restart your terminal or run 'source ~/.zshrc' to apply changes."
+}
+
 # Function to set up other configurations (placeholder for future additions)
 setup_other_configs() {
     echo "Setting up other configurations..."
     # Add other configuration setup steps here
-    # For example:
-    # setup_vim
-    # setup_tmux
-    # etc.
 }
 
 # Main execution
 echo "Starting system configuration setup..."
 setup_zsh
 setup_aerospace
+setup_flutter
 setup_other_configs
 echo "System configuration setup completed."
