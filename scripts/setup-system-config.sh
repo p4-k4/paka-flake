@@ -125,14 +125,14 @@ setup_flutter() {
     echo "Flutter switched to master channel and upgraded successfully"
     
     # Run Flutter doctor
-    echo "Running Flutter doctor..."
-    FLUTTER_DOCTOR_OUTPUT=$($FLUTTER_PATH doctor -v 2>&1)
-    if echo "$FLUTTER_DOCTOR_OUTPUT" | grep -q "\[✓\] No issues found!"; then
-        echo "Flutter doctor: No issues found"
-    else
-        echo "Flutter doctor found issues. Please review the following output:"
-        echo "$FLUTTER_DOCTOR_OUTPUT"
-    fi
+    # echo "Running Flutter doctor..."
+    # FLUTTER_DOCTOR_OUTPUT=$($FLUTTER_PATH doctor -v 2>&1)
+    # if echo "$FLUTTER_DOCTOR_OUTPUT" | grep -q "\[✓\] No issues found!"; then
+    #     echo "Flutter doctor: No issues found"
+    # else
+    #     echo "Flutter doctor found issues. Please review the following output:"
+    #     echo "$FLUTTER_DOCTOR_OUTPUT"
+    # fi
     
     echo "Flutter setup completed."
 }
