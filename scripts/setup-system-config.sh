@@ -54,13 +54,31 @@ setup_aerospace() {
 setup_flutter() {
     echo "Setting up Flutter..."
     
+    # Remove existing Flutter installation
+    if [ -f "/opt/homebrew/bin/flutter" ]; then
+        echo "Removing existing Flutter installation..."
+        brew uninstall flutter
+        rm -rf "$HOME_PATH/.flutter"
+        rm -rf "$HOME_PATH/.dart"
+        rm -rf "$HOME_PATH/flutter"
+        sed -i '' '/flutter/d' "$HOME_PATH/.config/zsh/.zshrc"
+        echo "Existing Flutter installation removed."
+    fi
+    
+    # Install Flutter via Homebrew
+    echo "Installing Flutter via Homebrew..."
+    if ! brew install flutter; then
+        echo "Error: Failed to install Flutter via Homebrew."
+        return 1
+    fi
+    
     # Check for Flutter in Homebrew bin directory
     FLUTTER_PATH="/opt/homebrew/bin/flutter"
     
     if [ -f "$FLUTTER_PATH" ]; then
-        echo "Flutter found at: $FLUTTER_PATH"
+        echo "Flutter installed successfully at: $FLUTTER_PATH"
     else
-        echo "Error: Flutter not found at $FLUTTER_PATH. Please ensure it's installed via Homebrew."
+        echo "Error: Flutter not found at $FLUTTER_PATH after installation."
         return 1
     fi
     
@@ -92,6 +110,10 @@ setup_flutter() {
     # Run Flutter commands
     run_flutter_command "channel master" || return 1
     run_flutter_command "upgrade" || return 1
+    
+    # Run Flutter doctor to check installation
+    echo "Running Flutter doctor..."
+    run_flutter_command "doctor -v" || echo "Warning: Flutter doctor found issues. Please review the output above."
     
     echo "Flutter setup completed successfully."
 }
