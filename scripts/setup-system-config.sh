@@ -97,6 +97,7 @@ setup_flutter() {
     echo "Flutter setup completed successfully."
 }
 
+# Function to set wallpaper
 setup_wallpaper() {
     echo "Setting up wallpaper..."
     
