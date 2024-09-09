@@ -78,6 +78,7 @@
               casks = [
                 "kitty"
                 "aerospace"
+                "flutter"
               ];
             };
 
