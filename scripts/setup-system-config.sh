@@ -25,32 +25,24 @@ setup_zsh() {
     # Create .zshenv in the home directory
     echo 'export ZDOTDIR="$HOME/.config/zsh"' > "$HOME_PATH/.zshenv"
     chown "$USERNAME:staff" "$HOME_PATH/.zshenv"
-    echo "Zsh configuration setup completed."
-}
-
-# Function to set up Aerospace configuration
-setup_aerospace() {
-    echo "Setting up Aerospace configuration..."
     
-    # Create ~/.config/aerospace directory if it doesn't exist
-    mkdir -p "$HOME_PATH/.config/aerospace"
-    # Copy the aerospace.toml file from the config directory to ~/.config/aerospace
-    echo "Copying aerospace.toml from: ${CONFIG_DIR}"
-    cp "${CONFIG_DIR}/aerospace/aerospace.toml" "$HOME_PATH/.config/aerospace/aerospace.toml"
-    if [ $? -eq 0 ]; then
-        chown "$USERNAME:staff" "$HOME_PATH/.config/aerospace/aerospace.toml"
-        echo "Aerospace configuration setup completed."
-    else
-        echo "Error: Failed to copy aerospace.toml. Please check if the file exists in ${CONFIG_DIR}/aerospace/"
-    fi
+    # Add Homebrew to PATH
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME_PATH/.config/zsh/.zshrc"
+    echo "Added Homebrew to PATH in .zshrc"
+    
+    echo "Zsh configuration setup completed."
 }
 
 # Function to set up Flutter
 setup_flutter() {
     echo "Setting up Flutter..."
     
+    # Source the .zshrc to get the updated PATH with Homebrew
+    source "$HOME_PATH/.config/zsh/.zshrc"
+    
     # Try to find Flutter installation
-    FLUTTER_PATH=$(brew --prefix flutter 2>/dev/null)
+    echo "Checking Flutter installation via Homebrew..."
+    FLUTTER_PATH=$(/opt/homebrew/bin/brew --prefix flutter 2>/dev/null)
     
     if [ -z "$FLUTTER_PATH" ]; then
         echo "Flutter not found via Homebrew. Checking common installation paths..."
@@ -58,18 +50,32 @@ setup_flutter() {
             "/opt/homebrew/Caskroom/flutter/latest/flutter"
             "/usr/local/Caskroom/flutter/latest/flutter"
             "$HOME/flutter"
+            "/Applications/flutter"
         )
         
         for path in "${COMMON_PATHS[@]}"; do
+            echo "Checking $path"
             if [ -d "$path" ]; then
-                FLUTTER_PATH="$path"
-                break
+                echo "Found directory at $path"
+                if [ -d "$path/bin" ]; then
+                    FLUTTER_PATH="$path"
+                    echo "Flutter bin directory found at $FLUTTER_PATH/bin"
+                    break
+                else
+                    echo "bin directory not found in $path"
+                fi
+            else
+                echo "$path does not exist"
             fi
         done
+    else
+        echo "Homebrew reports Flutter at: $FLUTTER_PATH"
     fi
     
     if [ -z "$FLUTTER_PATH" ]; then
         echo "Flutter not found. Please ensure it's installed via Homebrew or manually."
+        echo "Homebrew Caskroom contents:"
+        ls -l /opt/homebrew/Caskroom/
         return 1
     fi
     
@@ -90,8 +96,6 @@ setup_flutter() {
     
     echo "Flutter setup completed. Please restart your terminal or run 'source ~/.zshrc' to apply changes."
 }
-
-# ... (rest of the script remains unchanged)
 
 # Function to set up other configurations (placeholder for future additions)
 setup_other_configs() {
