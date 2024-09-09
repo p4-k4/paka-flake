@@ -109,4 +109,4 @@ source $ZSH/oh-my-zsh.sh
 # vi mode
 bindkey -v
 
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting autojump flutter)
