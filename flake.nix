@@ -57,7 +57,6 @@
               zsh-autosuggestions
               zsh-syntax-highlighting
             ];
-            environment.shells = with nixpkgs.legacyPackages.${system}; [ zsh ];
 
             programs.zsh = {
               enable = true;
