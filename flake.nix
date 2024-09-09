@@ -19,8 +19,7 @@
         modules = [
           {
             networking.hostName = hostName;
-            users.users.${userName} = {
-              name = userName;
+            users.users.${userName} = { name = userName;
               home = homePath;
               shell = nixpkgs.legacyPackages.${system}.zsh;
             };
